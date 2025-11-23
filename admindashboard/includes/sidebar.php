@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ?>
-      <!-- partial:partials/_sidebar.html -->
+      <!-- partial:partials/_sidebar.htmlllll -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
           <a class="sidebar-brand brand-logo" href="index.html"><img src="/payroll/admindashboard/assets/images/logo.svg" alt="logo" /></a>
