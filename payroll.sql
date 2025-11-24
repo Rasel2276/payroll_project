@@ -13,6 +13,6 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insert default admin
+-- Insert default admin ----
 INSERT INTO users (name, email, password, role, must_change_password) VALUES
 ('Admin User', 'admin@company.com', 'admin123', 'admin', 0);
