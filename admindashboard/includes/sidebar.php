@@ -80,14 +80,13 @@ if (session_status() === PHP_SESSION_NONE) {
               <span class="menu-icon">
                 <i class="mdi mdi-laptop"></i>
               </span>
-              <span class="menu-title">Basic UI Elements</span>
+              <span class="menu-title">Employee Management</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="/payroll/admindashboard/pages/add_employees.php">Add Employee</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/payroll/admindashboard/pages/layout.php">layout</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Typography</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/admindashboard/pages/manage_employee.php"">Manage Emplyoee</a></li>
               </ul>
             </div>
           </li>
