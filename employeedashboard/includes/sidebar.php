@@ -80,81 +80,63 @@ if (session_status() === PHP_SESSION_NONE) {
               <span class="menu-icon">
                 <i class="mdi mdi-laptop"></i>
               </span>
-              <span class="menu-title">Basic UI Elements</span>
+              <span class="menu-title">My Payroll</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/layout.php">Layout</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Dropdowns</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Typography</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/layout.php">Pending Salary</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">Received Salary</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">Request Salary</a></li>
               </ul>
             </div>
           </li>
 
-          
+
           <li class="nav-item menu-items">
-            <a class="nav-link" href="pages/forms/basic_elements.html">
+            <a class="nav-link" data-bs-toggle="collapse" href="#attendence" aria-expanded="false" aria-controls="ui-basic">
               <span class="menu-icon">
-                <i class="mdi mdi-playlist-play"></i>
+                <i class="mdi mdi-laptop"></i>
               </span>
-              <span class="menu-title">Form Elements</span>
+              <span class="menu-title">My Attendence</span>
               <i class="menu-arrow"></i>
             </a>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="pages/tables/basic-table.html">
-              <span class="menu-icon">
-                <i class="mdi mdi-table-large"></i>
-              </span>
-              <span class="menu-title">Tables</span>
-              <i class="menu-arrow"></i>
-            </a>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="pages/charts/chartjs.html">
-              <span class="menu-icon">
-                <i class="mdi mdi-chart-bar"></i>
-              </span>
-              <span class="menu-title">Charts</span>
-              <i class="menu-arrow"></i>
-            </a>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="pages/icons/font-awesome.html">
-              <span class="menu-icon">
-                <i class="mdi mdi-contacts"></i>
-              </span>
-              <span class="menu-title">Icons</span>
-              <i class="menu-arrow"></i>
-            </a>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-              <span class="menu-icon">
-                <i class="mdi mdi-security"></i>
-              </span>
-              <span class="menu-title">User Pages</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="auth">
+            <div class="collapse" id="attendence">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 505 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/layout.php">Ensure Your Presence</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">Presence History</a></li>
               </ul>
             </div>
           </li>
+
+
           <li class="nav-item menu-items">
-            <a class="nav-link" href="docs/documentation.html">
+            <a class="nav-link" data-bs-toggle="collapse" href="#leavemanage" aria-expanded="false" aria-controls="ui-basic">
               <span class="menu-icon">
-                <i class="mdi mdi-file-document"></i>
+                <i class="mdi mdi-laptop"></i>
               </span>
-              <span class="menu-title">Documentation</span>
+              <span class="menu-title">Leave Management</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="leavemanage">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="#">Apply for Leave</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">Manage Applied Leave</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">Accepted Leave</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="#">
+              <span class="menu-icon">
+                <i class="mdi mdi-calendar-check"></i>
+              </span>
+              <span class="menu-title">Notice Board</span>
+              <i class="menu-arrow"></i>
             </a>
           </li>
+          
         </ul>
       </nav>
       <!-- partial -->

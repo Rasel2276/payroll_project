@@ -6,8 +6,8 @@
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$12.34</h3>
-                          <p class="text-success ms-2 mb-0 font-weight-medium">+3.5%</p>
+                          <h3 class="mb-0"><i class="mdi mdi-account-multiple"></i></h3>
+                          <p class="text-success ms-2 mb-0 font-weight-medium">+25</p>
                         </div>
                       </div>
                       <div class="col-3">
@@ -16,7 +16,7 @@
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">Potential growth</h6>
+                    <h6 class="text-muted font-weight-normal">Total Employee</h6>
                   </div>
                 </div>
               </div>
@@ -26,8 +26,8 @@
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$17.34</h3>
-                          <p class="text-success ms-2 mb-0 font-weight-medium">+11%</p>
+                          <h3 class="mb-0"><i class="mdi mdi-cash-multiple"></i></h3>
+                          <p class="text-success ms-2 mb-0 font-weight-medium">৳-7500000</p>
                         </div>
                       </div>
                       <div class="col-3">
@@ -36,7 +36,7 @@
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">Revenue current</h6>
+                    <h6 class="text-muted font-weight-normal">Total paid</h6>
                   </div>
                 </div>
               </div>
@@ -46,8 +46,8 @@
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$12.34</h3>
-                          <p class="text-danger ms-2 mb-0 font-weight-medium">-2.4%</p>
+                          <h3 class="mb-0"><i class="mdi mdi-calendar-minus"></i></h3>
+                          <p class="text-danger ms-2 mb-0 font-weight-medium">-7</p>
                         </div>
                       </div>
                       <div class="col-3">
@@ -56,7 +56,7 @@
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">Daily Income</h6>
+                    <h6 class="text-muted font-weight-normal">Leave</h6>
                   </div>
                 </div>
               </div>
@@ -66,8 +66,8 @@
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$31.53</h3>
-                          <p class="text-success ms-2 mb-0 font-weight-medium">+3.5%</p>
+                          <h3 class="mb-0"><i class="mdi mdi-calendar-check"></i></h3>
+                          <p class="text-success ms-2 mb-0 font-weight-medium">+15</p>
                         </div>
                       </div>
                       <div class="col-3">
@@ -76,7 +76,7 @@
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">Expense current</h6>
+                    <h6 class="text-muted font-weight-normal">Total Present</h6>
                   </div>
                 </div>
               </div>
