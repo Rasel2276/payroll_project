@@ -86,7 +86,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="/payroll/admindashboard/pages/add_employees.php">Add Employee</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/payroll/admindashboard/pages/manage_employee.php"">Manage Emplyoee</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/admindashboard/pages/manage_employee.php">Manage Emplyoee</a></li>
               </ul>
             </div>
           </li>
@@ -114,7 +114,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <div class="collapse" id="leaveMenu">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Leave List</a>
+                  <a class="nav-link" href="/payroll/admindashboard/pages/manage_leaves_request.php">Leave List</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#">Approve Leave</a>

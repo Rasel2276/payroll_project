@@ -103,8 +103,8 @@ if (session_status() === PHP_SESSION_NONE) {
             </a>
             <div class="collapse" id="attendence">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/layout.php">Ensure Your Presence</a></li>
-                <li class="nav-item"> <a class="nav-link" href="#">Presence History</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/attendence.php">Ensure Your Presence</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/attendance_manage.php">Presence History</a></li>
               </ul>
             </div>
           </li>
@@ -120,9 +120,9 @@ if (session_status() === PHP_SESSION_NONE) {
             </a>
             <div class="collapse" id="leavemanage">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="#">Apply for Leave</a></li>
-                <li class="nav-item"> <a class="nav-link" href="#">Manage Applied Leave</a></li>
-                <li class="nav-item"> <a class="nav-link" href="#">Accepted Leave</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/leave_request.php">Apply for Leave</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/manage_applied_leave.php">Manage Applied Leave</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/payroll/employeedashboard/pages/approved_reject_leave.php">Accepted Leave</a></li>
               </ul>
             </div>
           </li>

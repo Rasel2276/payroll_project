@@ -20,6 +20,30 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    attendance_date DATE NOT NULL,
+    check_in TIME DEFAULT NULL,
+    check_out TIME DEFAULT NULL,
+    total_hours DECIMAL(5,2) DEFAULT 0.00,
+    status ENUM('Present', 'Absent', 'Late', 'Leave') DEFAULT 'Present',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE leave_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    leave_type ENUM('Casual', 'Sick') NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    reason TEXT NOT NULL,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    admin_remark TEXT DEFAULT NULL,
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 INSERT INTO users (name, email, password, role, must_change_password) VALUES
 ('Admin User', 'admin@company.com', 'admin123', 'admin', 0);

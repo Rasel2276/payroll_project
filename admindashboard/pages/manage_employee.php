@@ -80,7 +80,7 @@ function toggleDropdown(event, id) {
 </script>
 
 <style>
-.employee-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #191C24; color: #fff; border-radius: 10px; }
+.employee-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #191C24; color: #fff;  }
 .employee-table th, .employee-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #333; }
 .employee-table th { background-color: #2A2E39; font-weight: bold; }
 .employee-table tr:hover { background-color: #2e3340; }
