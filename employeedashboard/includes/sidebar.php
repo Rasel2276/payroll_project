@@ -128,7 +128,7 @@ if (session_status() === PHP_SESSION_NONE) {
           </li>
 
           <li class="nav-item menu-items">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/payroll/employeedashboard/pages/notice_board.php">
               <span class="menu-icon">
                 <i class="mdi mdi-calendar-check"></i>
               </span>

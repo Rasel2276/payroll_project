@@ -160,7 +160,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <div class="collapse" id="noticeMenu">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Declaire Notice</a>
+                  <a class="nav-link" href="/payroll/admindashboard/pages/send_notice.php">Declaire Notice</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#">Manage Notice</a>
@@ -181,11 +181,11 @@ if (session_status() === PHP_SESSION_NONE) {
           </li>
 
           <li class="nav-item menu-items">
-            <a class="nav-link" href="docs/documentation.html">
+            <a class="nav-link" href="/payroll/admindashboard/pages/manage_calendar.php">
               <span class="menu-icon">
                 <i class="mdi mdi-cog"></i>
               </span>
-              <span class="menu-title">Settings</span>
+              <span class="menu-title">Manage Calendar</span>
             </a>
           </li>
         </ul>
