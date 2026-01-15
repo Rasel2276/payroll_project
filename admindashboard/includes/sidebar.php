@@ -117,7 +117,7 @@ if (session_status() === PHP_SESSION_NONE) {
                   <a class="nav-link" href="/payroll/admindashboard/pages/manage_leaves_request.php">Leave List</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Approve Leave</a>
+                  <a class="nav-link" href="/payroll/admindashboard/pages/approved_reject_leave_list.php">Approve Leave</a>
                 </li>
               </ul>
             </div>
