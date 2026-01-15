@@ -29,130 +29,47 @@ if (isset($_POST['send_notice_btn'])) {
 include '../includes/header.php'; 
 ?>
 
-<style>
-    .content-wrapper { 
-        background: #000 !important; 
-    }
-    .page-title {
-        color: #ffffff;
-        font-weight: 500;
-        margin-bottom: 1.5rem;
-    }
-    .card-notice { 
-        background: #191c24; 
-        border: 1px solid #2c2e33; 
-        border-radius: 8px;
-    }
-    .custom-input { 
-        background: #2a3038 !important; 
-        border: 1px solid #2c2e33 !important; 
-        color: #fff !important; 
-        padding: 12px;
-    }
-    .custom-input:focus {
-        border-color: #00d25b !important;
-        color: #fff;
-    }
-    .btn-rounded-custom { 
-        border-radius: 50px; 
-        font-weight: bold;
-        padding: 12px;
-        background-color: #0090e7;
-        border: none;
-    }
-    .notice-scroll-area {
-        max-height: 480px; 
-        overflow-y: auto;
-        padding-right: 5px;
-    }
-    .notice-card-item { 
-        border-left: 4px solid #ffab00; 
-        background: #2a3038; 
-        margin-bottom: 15px; 
-        padding: 20px;
-        border-radius: 4px;
-    }
-    .notice-card-title {
-        color: #ffab00;
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
-    .notice-card-body {
-        color: #e4e4e4;
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin-bottom: 10px;
-    }
-    .notice-card-footer {
-        color: #6c7293;
-        font-size: 0.8rem;
-        display: flex;
-        align-items: center;
-    }
-    .notice-card-footer i {
-        margin-right: 5px;
-    }
 
-    /* Scrollbar Style */
-    .notice-scroll-area::-webkit-scrollbar { width: 4px; }
-    .notice-scroll-area::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
-</style>
 
 <div class="main-panel">
     <div class="content-wrapper">
         
         <div class="page-header">
-            <h3 class="page-title">Employee Notice Board</h3>
+            <h3 class="page-title text-white">Broadcast Announcement</h3>
         </div>
 
-        <div class="row">
-            <div class="col-md-5 grid-margin stretch-card">
+        <div class="row justify-content-center">
+            <div class="col-12 grid-margin stretch-card">
                 <div class="card card-notice">
-                    <div class="card-body">
-                        <h4 class="card-title text-warning mb-4">Broadcast New Notice</h4>
-                        <form method="POST">
-                            <div class="form-group">
-                                <label class="text-white">Notice Title</label>
-                                <input type="text" name="title" class="form-control custom-input" placeholder="e.g. Office Timing Change" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="text-white">Detailed Message</label>
-                                <textarea name="message" class="form-control custom-input" rows="6" placeholder="Write the announcement details here..." required></textarea>
-                            </div>
-                            <button type="submit" name="send_notice_btn" class="btn btn-primary w-100 btn-rounded-custom">
-                                <i class="mdi mdi-send"></i> Send Notice to All
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-7 grid-margin stretch-card">
-                <div class="card card-notice">
-                    <div class="card-body">
-                        <h4 class="card-title text-info mb-4">Recently Sent Announcements</h4>
-                        <div class="notice-scroll-area">
-                            <?php 
-                            $notices = $conn->query("SELECT * FROM notices ORDER BY id DESC");
-                            if($notices->num_rows > 0):
-                                while($row = $notices->fetch_assoc()): ?>
-                                    <div class="notice-card-item">
-                                        <div class="notice-card-title"><?php echo htmlspecialchars($row['title']); ?></div>
-                                        <div class="notice-card-body"><?php echo nl2br(htmlspecialchars($row['message'])); ?></div>
-                                        <div class="notice-card-footer">
-                                            <i class="mdi mdi-clock-outline"></i> 
-                                            Posted on: <?php echo date('d M, Y - h:i A', strtotime($row['created_at'])); ?>
-                                        </div>
+                    <div class="card-body p-5">
+                        <h4 class="card-title text-white mb-4">Send New Notice to All Employees</h4>
+                        
+                        <form method="POST" class="forms-sample">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><i class="mdi mdi-format-title mr-1"></i> Notice Title</label>
+                                        <input type="text" name="title" class="form-control custom-input" placeholder="e.g. Eid Vacation Notice" required>
                                     </div>
-                                <?php endwhile; 
-                            else: ?>
-                                <div class="text-center py-5">
-                                    <i class="mdi mdi-bell-off-outline text-muted" style="font-size: 40px;"></i>
-                                    <p class="text-muted mt-2">No notices have been sent yet.</p>
                                 </div>
-                            <?php endif; ?>
-                        </div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label><i class="mdi mdi-message-text-outline mr-1"></i> Detailed Message</label>
+                                        <textarea name="message" class="form-control custom-input" rows="1" placeholder="Type your announcement details here..." required style="min-height: 50px;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-12 text-right">
+                                    <button type="reset" class="btn btn-dark mr-2" style="border-radius: 8px; padding: 12px 25px;">Clear</button>
+                                    <button type="submit" name="send_notice_btn" class="btn btn-broadcast">
+                                        <i class="mdi mdi-send mr-1"></i> Broadcast to Employees
+                                    </button>
+                                </div>
+                            </div>
+                            </form>
+
                     </div>
                 </div>
             </div>
@@ -175,3 +92,45 @@ include '../includes/header.php';
     });
 </script>
 <?php unset($_SESSION['status']); unset($_SESSION['msg']); endif; ?>
+
+<style>
+    .content-wrapper { 
+        background: #000 !important; 
+        min-height: 100vh;
+    }
+    .card-notice { 
+        background: #191c24; 
+        border: 1px solid #2c2e33; 
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    .custom-input { 
+        background: #2a3038 !important; 
+        border: 1px solid #2c2e33 !important; 
+        color: #fff !important; 
+        padding: 15px;
+        border-radius: 8px;
+    }
+    .custom-input:focus {
+        border-color: #00d25b !important;
+        box-shadow: none;
+    }
+    .btn-broadcast { 
+        border-radius: 8px; 
+        font-weight: bold;
+        padding: 12px 30px;
+        background: linear-gradient(45deg, #0090e7, #00d25b);
+        border: none;
+        color: white;
+        transition: 0.3s;
+    }
+    .btn-broadcast:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+    }
+    label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #abb2b9;
+    }
+</style>

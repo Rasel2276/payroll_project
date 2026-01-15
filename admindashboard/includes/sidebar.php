@@ -163,7 +163,7 @@ if (session_status() === PHP_SESSION_NONE) {
                   <a class="nav-link" href="/payroll/admindashboard/pages/send_notice.php">Declaire Notice</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Manage Notice</a>
+                  <a class="nav-link" href="/payroll/admindashboard/pages/notice_manage.php">Manage Notice</a>
                 </li>
               </ul>
             </div>
