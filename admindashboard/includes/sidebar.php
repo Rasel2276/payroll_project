@@ -137,10 +137,25 @@ if (session_status() === PHP_SESSION_NONE) {
             <div class="collapse" id="payrollMenu">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Add Salary</a>
+                  <a class="nav-link" href="/payroll/admindashboard/pages/allowance_add.php">Add Allowance</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Manage Salary</a>
+                  <a class="nav-link" href="/payroll/admindashboard/pages/manage_allowances.php">Manage Allowance</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="/payroll/admindashboard/pages/add_loan.php">Add Loan</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/payroll/admindashboard/pages/manage_loans.php">Manage Loand</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="/payroll/admindashboard/pages/generate_payslip.php">Payroll</a>
+                </li>
+
+                 <li class="nav-item">
+                  <a class="nav-link" href="/payroll/admindashboard/pages/manage_payslip.php">Manage Payroll</a>
                 </li>
               </ul>
             </div>
