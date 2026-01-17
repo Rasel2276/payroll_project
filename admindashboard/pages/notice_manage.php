@@ -22,7 +22,7 @@ include '../includes/header.php';
 
 <div class="main-panel">
     <div class="content-wrapper">
-        <h2 class="text-white">Manage All Notices</h2>
+        <h3 class="text-white">Manage All Notices</h3>
 
         <div style="overflow-x:auto;" class="mt-4">
             <table class="employee-table">

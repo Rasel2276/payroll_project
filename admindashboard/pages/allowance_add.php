@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .floating-label input:not(:placeholder-shown) + label,
             .floating-label select:focus + label,
             .floating-label select:valid + label {
-                top: -8px; font-size: 12px; color: #4BB543;
+                top: -8px; font-size: 12px; color: #aaa;
             }
             .floating-label input:focus, .floating-label select:focus { border-color: #4BB543; }
             button {

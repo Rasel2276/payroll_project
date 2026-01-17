@@ -186,7 +186,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
           <li class="nav-item menu-items">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/payroll/admindashboard/pages/payroll_reports.php">
               <span class="menu-icon">
                 <i class="mdi mdi-chart-bar"></i>
               </span>

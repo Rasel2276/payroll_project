@@ -1,13 +1,27 @@
-<?php 
-session_start();
+<?php
+// ১. সেশন শুরু
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// --- Database Connection ---
-$host = 'localhost'; $db = 'payroll'; $user = 'root'; $pass = '';
+require_once __DIR__ . '/../../includes/admin_auth.php';
+
+$host = 'localhost';
+$db   = 'payroll';
+$user = 'root';   
+$pass = '';       
 $conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) die("DB Connection failed: ".$conn->connect_error);
 
-// --- 🟢 NOTICE LOGIC: Notice Send Kora ---
-if (isset($_POST['send_notice_btn'])) {
+if ($conn->connect_error) {
+    die("DB Connection failed: " . $conn->connect_error);
+}
+
+// সেশন থেকে স্ট্যাটাস চেক
+$status = $_SESSION['status'] ?? "";
+unset($_SESSION['status']);
+
+// --- ২. Notice Logic ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notice_btn'])) {
     $title = $conn->real_escape_string($_POST['title']);
     $message = $conn->real_escape_string($_POST['message']);
 
@@ -16,10 +30,8 @@ if (isset($_POST['send_notice_btn'])) {
     
     if ($stmt->execute()) {
         $_SESSION['status'] = "success";
-        $_SESSION['msg'] = "Notice broadcasted successfully!";
     } else {
         $_SESSION['status'] = "error";
-        $_SESSION['msg'] = "Something went wrong!";
     }
     $stmt->close();
     header("Location: " . $_SERVER['PHP_SELF']);
@@ -29,108 +41,94 @@ if (isset($_POST['send_notice_btn'])) {
 include '../includes/header.php'; 
 ?>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="main-panel">
     <div class="content-wrapper">
-        
-        <div class="page-header">
-            <h3 class="page-title text-white">Broadcast Announcement</h3>
-        </div>
+        <h3 class="text-white mb-4">Broadcast Announcement</h3>
 
-        <div class="row justify-content-center">
-            <div class="col-12 grid-margin stretch-card">
-                <div class="card card-notice">
-                    <div class="card-body p-5">
-                        <h4 class="card-title text-white mb-4">Send New Notice to All Employees</h4>
-                        
-                        <form method="POST" class="forms-sample">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label><i class="mdi mdi-format-title mr-1"></i> Notice Title</label>
-                                        <input type="text" name="title" class="form-control custom-input" placeholder="e.g. Eid Vacation Notice" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label><i class="mdi mdi-message-text-outline mr-1"></i> Detailed Message</label>
-                                        <textarea name="message" class="form-control custom-input" rows="1" placeholder="Type your announcement details here..." required style="min-height: 50px;"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="row mt-3">
-                                <div class="col-12 text-right">
-                                    <button type="reset" class="btn btn-dark mr-2" style="border-radius: 8px; padding: 12px 25px;">Clear</button>
-                                    <button type="submit" name="send_notice_btn" class="btn btn-broadcast">
-                                        <i class="mdi mdi-send mr-1"></i> Broadcast to Employees
-                                    </button>
-                                </div>
-                            </div>
-                            </form>
-
+        <form method="POST" class="employee-form">
+            <div class="row">
+                <div class="col-full">
+                    <div class="floating-label">
+                        <input type="text" name="title" placeholder=" " required>
+                        <label>Notice Title</label>
                     </div>
                 </div>
             </div>
-        </div>
 
+            <div class="row">
+                <div class="col-full">
+                    <div class="floating-label">
+                        <textarea name="message" placeholder=" " required style="height: 120px;"></textarea>
+                        <label>Detailed Message</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-row" style="margin-top: 20px;">
+                <button type="submit" name="send_notice_btn">Send to Employees</button>
+                <button type="reset" style="background: #555; margin-left: 10px;">Clear</button>
+            </div>
+        </form>
+
+        <style>
+            /* Allowance File CSS - Exact Followed */
+            .employee-form { background: #191C24; padding: 25px; border-radius: 10px; max-width: 1200px; }
+            .row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+            .col-full { flex: 1 1 100%; }
+            
+            .floating-label { position: relative; margin-top: 15px; }
+            .floating-label input, .floating-label textarea {
+                width: 100%; padding: 12px; border: 1px solid #555; border-radius: 5px; 
+                background: transparent !important; color: #fff; box-sizing: border-box; outline: none;
+                appearance: none;
+            }
+            
+            .floating-label label {
+                position: absolute; left: 12px; top: 12px; color: #aaa; 
+                background: #191C24; padding: 0 5px; transition: .2s; pointer-events: none;
+            }
+            
+            /* Animation for Floating Labels */
+            .floating-label input:focus + label,
+            .floating-label input:not(:placeholder-shown) + label,
+            .floating-label textarea:focus + label,
+            .floating-label textarea:not(:placeholder-shown) + label {
+                top: -8px; font-size: 12px; color: #4BB543;
+            }
+            
+            .floating-label input:focus, .floating-label textarea:focus { border-color: #4BB543; }
+            
+            button {
+                background: #4BB543; color: #fff; border: none; padding: 12px 35px; 
+                border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s;
+            }
+            button:hover { background: #3e9e37; }
+        </style>
     </div>
+
+    <script>
+    <?php if($status === "success"): ?>
+        Swal.fire({
+            title: 'Success!',
+            text: 'Notice broadcasted successfully to all employees.',
+            icon: 'success',
+            confirmButtonColor: '#4BB543',
+            background: '#191C24',
+            color: '#fff'
+        });
+    <?php elseif($status === "error"): ?>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Something went wrong while broadcasting.',
+            icon: 'error',
+            confirmButtonColor: '#fc424a',
+            background: '#191C24',
+            color: '#fff'
+        });
+    <?php endif; ?>
+    </script>
+
     <?php include '../includes/footer.php'; ?>
 </div>
-
-<?php if(isset($_SESSION['status'])): ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    Swal.fire({
-        title: '<?php echo ($_SESSION['status'] == "success") ? "Success!" : "Wait!"; ?>',
-        text: '<?php echo $_SESSION['msg']; ?>',
-        icon: '<?php echo $_SESSION['status']; ?>',
-        background: '#191c24', 
-        color: '#fff', 
-        confirmButtonColor: '#00d25b'
-    });
-</script>
-<?php unset($_SESSION['status']); unset($_SESSION['msg']); endif; ?>
-
-<style>
-    .content-wrapper { 
-        background: #000 !important; 
-        min-height: 100vh;
-    }
-    .card-notice { 
-        background: #191c24; 
-        border: 1px solid #2c2e33; 
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    }
-    .custom-input { 
-        background: #2a3038 !important; 
-        border: 1px solid #2c2e33 !important; 
-        color: #fff !important; 
-        padding: 15px;
-        border-radius: 8px;
-    }
-    .custom-input:focus {
-        border-color: #00d25b !important;
-        box-shadow: none;
-    }
-    .btn-broadcast { 
-        border-radius: 8px; 
-        font-weight: bold;
-        padding: 12px 30px;
-        background: linear-gradient(45deg, #0090e7, #00d25b);
-        border: none;
-        color: white;
-        transition: 0.3s;
-    }
-    .btn-broadcast:hover {
-        transform: translateY(-2px);
-        opacity: 0.9;
-    }
-    label {
-        font-weight: 500;
-        margin-bottom: 8px;
-        color: #abb2b9;
-    }
-</style>

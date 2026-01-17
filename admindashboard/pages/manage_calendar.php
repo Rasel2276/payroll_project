@@ -46,7 +46,7 @@ include '../includes/header.php';
             <div class="col-md-5 grid-margin stretch-card">
                 <div class="card card-dark" style="background: #191c24; border: 1px solid #2c2e33;">
                     <div class="card-body">
-                        <h4 class="card-title text-warning">Declare Holiday</h4>
+                        <h4 class="card-title text-white">Declare Holiday</h4>
                         <form method="POST">
                             <div class="form-group">
                                 <label class="text-white">Choose Date</label>
@@ -66,7 +66,7 @@ include '../includes/header.php';
                 <div class="card card-dark" style="background: #191c24; border: 1px solid #2c2e33;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="card-title text-info mb-0">Calendar View</h4>
+                            <h4 class="card-title text-white mb-0">Calendar View</h4>
                             <form method="GET" id="monthFilterForm">
                                 <select name="month" class="form-control text-white" style="background: #2a3038; border: 1px solid #2c2e33;" onchange="document.getElementById('monthFilterForm').submit();">
                                     <?php 

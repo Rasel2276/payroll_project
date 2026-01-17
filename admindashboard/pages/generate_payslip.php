@@ -173,7 +173,7 @@ $employees = $conn->query("SELECT id, name FROM users WHERE role = 'employee' OR
         }
         .ps-floating-label label{position:absolute;left:12px;top:12px;color:#aaa;background:#191C24;padding:0 5px;transition:.2s;pointer-events:none}
         .ps-floating-label input:focus+label, .ps-floating-label input:not(:placeholder-shown)+label,
-        .ps-floating-label select:focus+label, .ps-floating-label select:valid+label { top:-8px; font-size:12px; color:#4BB543; }
+        .ps-floating-label select:focus+label, .ps-floating-label select:valid+label { top:-8px; font-size:12px; color:#aaa; }
         
         .ps-section-title{margin:20px 0 10px;font-weight:bold;padding-bottom:5px;border-bottom:1px solid #333}
         .ps-earn{color:#4BB543}.ps-deduct{color:#ff4d4f}
