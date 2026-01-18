@@ -1,7 +1,7 @@
 <?php 
 session_start();
 
-// --- 1. Database Connection ---
+
 $host = "localhost";
 $user = "root";
 $pass = "";
@@ -10,7 +10,7 @@ $db   = "payroll";
 $conn = mysqli_connect($host, $user, $pass, $db);
 if (!$conn) die("Connection failed: " . mysqli_connect_error());
 
-// --- 2. Auth Check ---
+
 if (isset($_SESSION['auth_user']['id'])) {
     $user_id = $_SESSION['auth_user']['id'];
 } else {
@@ -18,14 +18,14 @@ if (isset($_SESSION['auth_user']['id'])) {
     exit();
 }
 
-// --- 3. Leave Balance Logic ---
+
 $current_month = date('m');
 $current_year  = date('Y');
 
 $yearly_casual_limit = 10; 
 $yearly_sick_limit   = 15;
 
-// Monthly Taken
+
 $m_casual = mysqli_query($conn, "SELECT SUM(DATEDIFF(end_date, start_date) + 1) as total FROM leave_requests 
     WHERE user_id = '$user_id' AND leave_type = 'Casual' AND status != 'Rejected' 
     AND MONTH(start_date) = '$current_month' AND YEAR(start_date) = '$current_year'");
@@ -36,7 +36,7 @@ $m_sick = mysqli_query($conn, "SELECT SUM(DATEDIFF(end_date, start_date) + 1) as
     AND MONTH(start_date) = '$current_month' AND YEAR(start_date) = '$current_year'");
 $monthly_sick_taken = mysqli_fetch_assoc($m_sick)['total'] ?? 0;
 
-// Yearly Taken
+
 $y_casual = mysqli_query($conn, "SELECT SUM(DATEDIFF(end_date, start_date) + 1) as total FROM leave_requests 
     WHERE user_id = '$user_id' AND leave_type = 'Casual' AND status = 'Approved' 
     AND YEAR(start_date) = '$current_year'");
@@ -53,7 +53,7 @@ $m_sick_rem   = 3 - $monthly_sick_taken;
 $y_casual_rem = $yearly_casual_limit - $yearly_casual_taken;
 $y_sick_rem   = $yearly_sick_limit - $yearly_sick_taken;
 
-// --- 4. Form Submission Logic ---
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $leave_type = $_POST['leave_type'];
     $start_date = $_POST['start_date'];
@@ -97,7 +97,6 @@ include '../includes/header.php';
 
 <div class="main-panel">
     <div class="content-wrapper">
-        
         <div class="page-header mb-4">
             <h3 class="page-title text-white">Leave Application</h3>
         </div>
@@ -198,22 +197,99 @@ include '../includes/header.php';
             </div>
         </div>
     </div>
-
     <?php include '../includes/footer.php'; ?>
 </div>
 
 <style>
-    .main-panel { min-height: 100vh; display: flex; flex-direction: column; }
-    .content-wrapper { flex: 1; background: #000000 !important; padding: 2.125rem 2.5rem; }
-    .page-title { color: #ffffff; font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px; }
-    .card-dark { background: #191c24; border: 1px solid #2c2e33; border-radius: 8px; }
-    .card-title { color: #ffffff; font-size: 1.1rem; border-bottom: 1px solid #2c2e33; padding-bottom: 15px; }
-    .form-group { margin-bottom: 1rem; }
-    label { color: #adb5bd; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.7rem; display: block; }
-    .custom-input { background-color: #2a3038 !important; border: 1px solid #2c2e33 !important; color: #ffffff !important; padding: 12px 15px !important; height: auto !important; border-radius: 6px !important; font-size: 0.9rem; }
-    .custom-input:focus { border-color: #00d25b !important; box-shadow: 0 0 0 0.2rem rgba(0, 210, 91, 0.15); outline: none; }
-    .btn-success { background-color: #00d25b; border: none; font-size: 0.95rem; font-weight: 600; }
-    .btn-dark { background-color: #2a3038; border: 1px solid #2c2e33; font-size: 0.95rem; font-weight: 600; }
-    .table td, .table th { border-top: 1px solid #2c2e33; padding: 12px; }
-    @media (max-width: 768px) { .content-wrapper { padding: 1.5rem 1rem; } }
+
+    .main-panel { 
+        min-height: 100vh; 
+        display: flex; 
+        flex-direction: column; 
+    }
+
+    .content-wrapper { 
+        flex: 1; 
+        background: #000000 !important; 
+        padding: 2.125rem 2.5rem; 
+    }
+
+ 
+    .page-title { 
+        color: #ffffff; 
+        font-size: 1.25rem; 
+        font-weight: 600; 
+        letter-spacing: 0.5px; 
+    }
+
+
+    .card-dark { 
+        background: #191c24; 
+        border: 1px solid #2c2e33; 
+        border-radius: 8px; 
+    }
+
+    .card-title { 
+        color: #ffffff; 
+        font-size: 1.1rem; 
+        border-bottom: 1px solid #2c2e33; 
+        padding-bottom: 15px; 
+    }
+
+    .form-group { 
+        margin-bottom: 1rem; 
+    }
+
+    label { 
+        color: #adb5bd; 
+        font-size: 0.85rem; 
+        font-weight: 500; 
+        margin-bottom: 0.7rem; 
+        display: block; 
+    }
+
+    .custom-input { 
+        background-color: #2a3038 !important; 
+        border: 1px solid #2c2e33 !important; 
+        color: #ffffff !important; 
+        padding: 12px 15px !important; 
+        height: auto !important; 
+        border-radius: 6px !important; 
+        font-size: 0.9rem; 
+    }
+
+    .custom-input:focus { 
+        border-color: #00d25b !important; 
+        box-shadow: 0 0 0 0.2rem rgba(0, 210, 91, 0.15); 
+        outline: none; 
+    }
+
+ 
+    .btn-success { 
+        background-color: #00d25b; 
+        border: none; 
+        font-size: 0.95rem; 
+        font-weight: 600; 
+    }
+
+    .btn-dark { 
+        background-color: #2a3038; 
+        border: 1px solid #2c2e33; 
+        font-size: 0.95rem; 
+        font-weight: 600; 
+    }
+
+ 
+    .table td, 
+    .table th { 
+        border-top: 1px solid #2c2e33; 
+        padding: 12px; 
+    }
+
+  
+    @media (max-width: 768px) { 
+        .content-wrapper { 
+            padding: 1.5rem 1rem; 
+        } 
+    }
 </style>

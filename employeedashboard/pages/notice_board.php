@@ -1,12 +1,12 @@
 <?php 
 session_start();
 
-// --- Database Connection ---
+
 $host = 'localhost'; $db = 'payroll'; $user = 'root'; $pass = '';
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) die("DB Connection failed: ".$conn->connect_error);
 
-// Employee login check
+
 if (!isset($_SESSION['auth_user'])) {
     header("Location: ../../index.php");
     exit();
@@ -67,7 +67,7 @@ include '../includes/header.php';
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-// ড্রপডাউন কন্ট্রোল
+
 document.addEventListener('click', function(e) {
     let dropdowns = document.querySelectorAll('.dropdown-content');
     dropdowns.forEach(d => d.style.display = 'none');
@@ -81,7 +81,7 @@ function toggleDropdown(event, id) {
     dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
 }
 
-// নোটিশ ভিউ ফাংশন
+
 function viewNotice(title, message, date) {
     Swal.fire({
         title: '<span style="color: #ffab00;">' + title + '</span>',
@@ -98,7 +98,7 @@ function viewNotice(title, message, date) {
     });
 }
 
-// রিমুভ ফাংশন (ডাটাবেজ থেকে মুছবে না, শুধু স্ক্রিন থেকে সরিয়ে দিবে)
+
 function hideNotice(id) {
     if(confirm('Are you sure you want to remove this from your view?')) {
         const row = document.getElementById('notice-row-' + id);
@@ -112,22 +112,104 @@ function hideNotice(id) {
 </script>
 
 <style>
-/* আপনার চাওয়া অনুযায়ী Manage Notice এর হুবহু স্টাইল */
-.content-wrapper { background: #000 !important; min-height: 100vh; }
-.employee-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #191C24; color: #fff; }
-.employee-table th, .employee-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #333; }
-.employee-table th { background-color: #2A2E39; font-weight: bold; color: #fff; }
-.employee-table tr:hover { background-color: #2e3340; }
+ 
+    .content-wrapper { 
+        background: #000 !important; 
+        min-height: 100vh; 
+    }
 
-.dropbtn { background-color: #4BB543; color: #fff; padding: 6px 12px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; min-width: 80px; }
-.dropdown-content { display: none; position: absolute; background-color: #2A2E39; min-width: 150px; border-radius: 5px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); z-index: 1000; right: 20px; }
-.dropdown-content a { color: #fff; padding: 10px 15px; text-decoration: none; display: block; font-size: 13px; cursor: pointer; }
-.dropdown-content a:hover { background-color: #4BB543; }
+    
+    .employee-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-bottom: 30px; 
+        background-color: #191C24; 
+        color: #fff; 
+    }
 
-@media(max-width:768px){
-    .employee-table thead { display: none; }
-    .employee-table, .employee-table tbody, .employee-table tr, .employee-table td { display: block; width: 100%; }
-    .employee-table td { text-align: right; padding-left: 50%; position: relative; border-bottom: 1px solid #333; }
-    .employee-table td::before { content: attr(data-label); position: absolute; left: 15px; width: 45%; font-weight: bold; text-align: left; color: #4BB543; }
-}
+    .employee-table th, 
+    .employee-table td { 
+        padding: 12px 15px; 
+        text-align: left; 
+        border-bottom: 1px solid #333; 
+    }
+
+    .employee-table th { 
+        background-color: #2A2E39; 
+        font-weight: bold; 
+        color: #fff; 
+    }
+
+    .employee-table tr:hover { 
+        background-color: #2e3340; 
+    }
+
+    
+    .dropbtn { 
+        background-color: #4BB543; 
+        color: #fff; 
+        padding: 6px 12px; 
+        font-size: 14px; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer; 
+        min-width: 80px; 
+    }
+
+
+    .dropdown-content { 
+        display: none; 
+        position: absolute; 
+        background-color: #2A2E39; 
+        min-width: 150px; 
+        border-radius: 5px; 
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3); 
+        z-index: 1000; 
+        right: 20px; 
+    }
+
+    .dropdown-content a { 
+        color: #fff; 
+        padding: 10px 15px; 
+        text-decoration: none; 
+        display: block; 
+        font-size: 13px; 
+        cursor: pointer; 
+    }
+
+    .dropdown-content a:hover { 
+        background-color: #4BB543; 
+    }
+
+
+    @media(max-width: 768px) {
+        .employee-table thead { 
+            display: none; 
+        }
+
+        .employee-table, 
+        .employee-table tbody, 
+        .employee-table tr, 
+        .employee-table td { 
+            display: block; 
+            width: 100%; 
+        }
+
+        .employee-table td { 
+            text-align: right; 
+            padding-left: 50%; 
+            position: relative; 
+            border-bottom: 1px solid #333; 
+        }
+
+        .employee-table td::before { 
+            content: attr(data-label); 
+            position: absolute; 
+            left: 15px; 
+            width: 45%; 
+            font-weight: bold; 
+            text-align: left; 
+            color: #4BB543; 
+        }
+    }
 </style>

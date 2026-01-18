@@ -8,7 +8,7 @@ $pass = '';
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) die("DB Connection failed: ".$conn->connect_error);
 
-// --- Action Logic (Delete Only) ---
+
 if(isset($_GET['delete'])) {
     $del_id = intval($_GET['delete']);
     $conn->query("DELETE FROM leave_requests WHERE id=$del_id");
@@ -18,7 +18,7 @@ if(isset($_GET['delete'])) {
 
 include '../includes/header.php';
 
-// শুধুমাত্র Approved এবং Rejected leave data fetch করা হচ্ছে
+
 $sql = "SELECT lr.*, u.name as emp_name FROM leave_requests lr 
         JOIN users u ON lr.user_id = u.id 
         WHERE lr.status IN ('Approved', 'Rejected') 
@@ -26,116 +26,6 @@ $sql = "SELECT lr.*, u.name as emp_name FROM leave_requests lr
 $leaves = $conn->query($sql);
 ?>
 
-<style>
-    /* --- Main Layout --- */
-    .content-wrapper { 
-        background-color: #000 !important; 
-        min-height: 100vh; 
-    }
-
-    /* --- Table Styles --- */
-    .employee-table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        margin-bottom: 30px; 
-        background-color: #191C24; 
-        color: #fff;  
-    }
-
-    .employee-table th, 
-    .employee-table td { 
-        padding: 12px 15px; 
-        text-align: left; 
-        border-bottom: 1px solid #333; 
-    }
-
-    .employee-table th { 
-        background-color: #2A2E39; 
-        font-weight: bold; 
-        color: #ffffff; /* Purple Header */
-    }
-
-    .employee-table tr:hover { 
-        background-color: #2e3340; 
-    }
-
-    /* --- Action Button --- */
-    .dropbtn { 
-        background-color: #0090e7; 
-        color: #fff; 
-        padding: 6px 12px; 
-        font-size: 14px; 
-        border: none; 
-        border-radius: 5px; 
-        cursor: pointer; 
-        min-width: 80px; 
-    }
-
-    /* --- Dropdown Menu --- */
-    .dropdown-content { 
-        display: none; 
-        position: absolute; 
-        background-color: #2A2E39; 
-        min-width: 150px; 
-        border-radius: 5px; 
-        box-shadow: 0 8px 16px rgba(0,0,0,0.3); 
-        z-index: 1000; 
-        right: 10px; 
-    }
-
-    .dropdown-content a { 
-        color: #fff; 
-        padding: 10px 15px; 
-        text-decoration: none; 
-        display: block; 
-    }
-
-    .dropdown-content a:hover { 
-        background-color: #fc424a; 
-    }
-
-    /* --- Leave Status Styles --- */
-    .status-approved { 
-        color: #00d25b; 
-        font-weight: bold; 
-    }
-
-    .status-rejected { 
-        color: #fc424a; 
-        font-weight: bold; 
-    }
-
-    /* --- Responsive Design (Mobile) --- */
-    @media(max-width: 768px) {
-        .employee-table thead { 
-            display: none; 
-        }
-
-        .employee-table, 
-        .employee-table tbody, 
-        .employee-table tr, 
-        .employee-table td { 
-            display: block; 
-            width: 100%; 
-        }
-
-        .employee-table td { 
-            text-align: right; 
-            padding-left: 50%; 
-            position: relative; 
-            border-bottom: 1px solid #333; 
-        }
-
-        .employee-table td::before { 
-            content: attr(data-label); 
-            position: absolute; 
-            left: 15px; 
-            width: 45%; 
-            font-weight: bold; 
-            text-align: left; 
-        }
-    }
-</style>
 
 <div class="main-panel">
     <div class="content-wrapper">
@@ -206,6 +96,117 @@ $leaves = $conn->query($sql);
         dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
     }
     </script>
+
+    <style>
+   
+    .content-wrapper { 
+        background-color: #000 !important; 
+        min-height: 100vh; 
+    }
+
+ 
+    .employee-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-bottom: 30px; 
+        background-color: #191C24; 
+        color: #fff;  
+    }
+
+    .employee-table th, 
+    .employee-table td { 
+        padding: 12px 15px; 
+        text-align: left; 
+        border-bottom: 1px solid #333; 
+    }
+
+    .employee-table th { 
+        background-color: #2A2E39; 
+        font-weight: bold; 
+        color: #ffffff;
+    }
+
+    .employee-table tr:hover { 
+        background-color: #2e3340; 
+    }
+
+   
+    .dropbtn { 
+        background-color: #0090e7; 
+        color: #fff; 
+        padding: 6px 12px; 
+        font-size: 14px; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer; 
+        min-width: 80px; 
+    }
+
+   
+    .dropdown-content { 
+        display: none; 
+        position: absolute; 
+        background-color: #2A2E39; 
+        min-width: 150px; 
+        border-radius: 5px; 
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3); 
+        z-index: 1000; 
+        right: 10px; 
+    }
+
+    .dropdown-content a { 
+        color: #fff; 
+        padding: 10px 15px; 
+        text-decoration: none; 
+        display: block; 
+    }
+
+    .dropdown-content a:hover { 
+        background-color: #fc424a; 
+    }
+
+
+    .status-approved { 
+        color: #00d25b; 
+        font-weight: bold; 
+    }
+
+    .status-rejected { 
+        color: #fc424a; 
+        font-weight: bold; 
+    }
+
+    
+    @media(max-width: 768px) {
+        .employee-table thead { 
+            display: none; 
+        }
+
+        .employee-table, 
+        .employee-table tbody, 
+        .employee-table tr, 
+        .employee-table td { 
+            display: block; 
+            width: 100%; 
+        }
+
+        .employee-table td { 
+            text-align: right; 
+            padding-left: 50%; 
+            position: relative; 
+            border-bottom: 1px solid #333; 
+        }
+
+        .employee-table td::before { 
+            content: attr(data-label); 
+            position: absolute; 
+            left: 15px; 
+            width: 45%; 
+            font-weight: bold; 
+            text-align: left; 
+        }
+    }
+</style>
 
     <?php include '../includes/footer.php'; ?>
 </div>

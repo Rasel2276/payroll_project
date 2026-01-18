@@ -11,10 +11,10 @@ if (isset($_SESSION['auth_user']['id'])) {
 $host = 'localhost'; $db = 'payroll'; $user = 'root'; $pass = '';       
 $conn = new mysqli($host, $user, $pass, $db);
 
-// --- 🔴 DELETE LOGIC ---
+
 if (isset($_GET['delete'])) {
     $del_id = intval($_GET['delete']);
-    // user_id দিয়ে চেক করা হয়েছে যেন ইউজার শুধু নিজের হিস্ট্রি ডিলিট করতে পারে
+    
     $conn->query("DELETE FROM leave_requests WHERE id=$del_id AND user_id=$user_id");
     header("Location: ".$_SERVER['PHP_SELF']);
     exit;
@@ -22,7 +22,7 @@ if (isset($_GET['delete'])) {
 
 include '../includes/header.php';
 
-// Fetch Approved or Rejected Leaves ONLY
+
 $query = "SELECT leave_requests.*, users.name 
           FROM leave_requests 
           JOIN users ON leave_requests.user_id = users.id 
@@ -83,7 +83,7 @@ $result = $conn->query($query);
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-// ড্রপডাউন ফাংশন - হুবহু আপনার Manage Employee ফাইলের মতো
+
 document.addEventListener('click', function(e) {
     let dropdowns = document.querySelectorAll('.dropdown-content');
     dropdowns.forEach(d => d.style.display = 'none');
@@ -109,25 +109,101 @@ function viewFullReason(reason) {
 </script>
 
 <style>
-/* CSS - ১০০% হুবহু আপনার Manage Employee ফাইলের মতো */
-.content-wrapper{
-    height:100vh;
-}
-.employee-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #191C24; color: #fff; }
-.employee-table th, .employee-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #333; }
-.employee-table th { background-color: #2A2E39; font-weight: bold; color: #fff; }
-.employee-table tr:hover { background-color: #2e3340; }
 
-.dropbtn { background-color: #4BB543; color: #fff; padding: 6px 12px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; min-width: 80px; }
+    .content-wrapper {
+        height: 100vh;
+    }
 
-.dropdown-content { display: none; position: absolute; background-color: #2A2E39; min-width: 150px; border-radius: 5px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); z-index: 1000; right: 20px; }
-.dropdown-content a { color: #fff; padding: 10px 15px; text-decoration: none; display: block; font-size: 13px; }
-.dropdown-content a:hover { background-color: #4BB543; }
+  
+    .employee-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-bottom: 30px; 
+        background-color: #191C24; 
+        color: #fff; 
+    }
 
-@media(max-width:768px){
-    .employee-table thead { display: none; }
-    .employee-table, .employee-table tbody, .employee-table tr, .employee-table td { display: block; width: 100%; }
-    .employee-table td { text-align: right; padding-left: 50%; position: relative; border-bottom: 1px solid #333; }
-    .employee-table td::before { content: attr(data-label); position: absolute; left: 15px; width: 45%; font-weight: bold; text-align: left; }
-}
+    .employee-table th, 
+    .employee-table td { 
+        padding: 12px 15px; 
+        text-align: left; 
+        border-bottom: 1px solid #333; 
+    }
+
+    .employee-table th { 
+        background-color: #2A2E39; 
+        font-weight: bold; 
+        color: #fff; 
+    }
+
+    .employee-table tr:hover { 
+        background-color: #2e3340; 
+    }
+
+
+    .dropbtn { 
+        background-color: #4BB543; 
+        color: #fff; 
+        padding: 6px 12px; 
+        font-size: 14px; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer; 
+        min-width: 80px; 
+    }
+
+    
+    .dropdown-content { 
+        display: none; 
+        position: absolute; 
+        background-color: #2A2E39; 
+        min-width: 150px; 
+        border-radius: 5px; 
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3); 
+        z-index: 1000; 
+        right: 20px; 
+    }
+
+    .dropdown-content a { 
+        color: #fff; 
+        padding: 10px 15px; 
+        text-decoration: none; 
+        display: block; 
+        font-size: 13px; 
+    }
+
+    .dropdown-content a:hover { 
+        background-color: #4BB543; 
+    }
+
+ 
+    @media(max-width: 768px) {
+        .employee-table thead { 
+            display: none; 
+        }
+
+        .employee-table, 
+        .employee-table tbody, 
+        .employee-table tr, 
+        .employee-table td { 
+            display: block; 
+            width: 100%; 
+        }
+
+        .employee-table td { 
+            text-align: right; 
+            padding-left: 50%; 
+            position: relative; 
+            border-bottom: 1px solid #333; 
+        }
+
+        .employee-table td::before { 
+            content: attr(data-label); 
+            position: absolute; 
+            left: 15px; 
+            width: 45%; 
+            font-weight: bold; 
+            text-align: left; 
+        }
+    }
 </style>

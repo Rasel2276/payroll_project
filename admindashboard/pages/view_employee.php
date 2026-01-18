@@ -33,16 +33,13 @@ $emp = $result->fetch_assoc();
 <div class="main-panel">
     <div class="content-wrapper">
 
-        <!-- PAGE HEADER -->
         <div class="page-header-box">
             <h2 class="mb-4">Employee Profile</h2>
             <a href="manage_employees.php" class="back-btn">Back to List</a>
         </div>
 
-        <!-- PROFILE CARD -->
         <div class="employee-form">
 
-            <!-- TOP PROFILE INFO -->
             <div class="profile-top mb-5">
                 <div class="avatar-container">
                     <?php if (!empty($emp['profile_image'])): ?>
@@ -56,10 +53,10 @@ $emp = $result->fetch_assoc();
                     <h3><?php echo htmlspecialchars($emp['name']); ?></h3>
                     <p><?php echo htmlspecialchars($emp['designation']); ?></p>
                     <span class="id-badge">Employee ID: #<?php echo $emp['id']; ?></span>
+                    <br> <span class="id-badge" style="margin-top: 5px; display: inline-block;">Contact No: <?php echo htmlspecialchars($emp['contact_no'] ?: 'N/A'); ?></span>
                 </div>
             </div>
 
-            <!-- BASIC DETAILS -->
             <div class="row">
                 <div class="col">
                     <div class="display-item">
@@ -83,7 +80,6 @@ $emp = $result->fetch_assoc();
                 </div>
             </div>
 
-            <!-- BANK & STATUS -->
             <div class="row">
                 <div class="col">
                     <div class="display-item">
@@ -107,7 +103,6 @@ $emp = $result->fetch_assoc();
                 </div>
             </div>
 
-            <!-- ADDRESSES -->
             <div class="row">
                 <div class="col">
                     <div class="display-item">
@@ -128,7 +123,6 @@ $emp = $result->fetch_assoc();
                 </div>
             </div>
 
-            <!-- ACTION BUTTONS -->
             <div class="submit-row mt-4">
                 <a href="edit_employee.php?id=<?php echo $emp['id']; ?>" class="action-btn edit">Edit Profile</a>
                 <button onclick="window.print()" class="action-btn print">Download PDF</button>
@@ -141,7 +135,7 @@ $emp = $result->fetch_assoc();
 </div>
 
 <style>
-/* Dashboard layout styling */
+
 .employee-form {
     background: #191C24;
     padding: 25px;
@@ -210,6 +204,7 @@ $emp = $result->fetch_assoc();
     border-radius: 4px;
     font-size: 12px;
     font-weight: bold;
+    color: #fff;
 }
 
 .display-item {

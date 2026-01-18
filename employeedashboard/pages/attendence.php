@@ -1,7 +1,7 @@
 <?php 
 session_start();
 
-// --- LOGIC UPDATE: Get ID from your auth_user session ---
+
 if (isset($_SESSION['auth_user']['id'])) {
     $user_id = $_SESSION['auth_user']['id'];
 } else {
@@ -9,7 +9,7 @@ if (isset($_SESSION['auth_user']['id'])) {
     exit();
 }
 
-// Database Connection
+
 $host = 'localhost';
 $db   = 'payroll';
 $user = 'root';
@@ -18,10 +18,10 @@ $conn = new mysqli($host, $user, $pass, $db);
 
 if ($conn->connect_error) die("DB Connection failed: ".$conn->connect_error);
 
-// --- 🟢 FORM LOGIC ---
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-    // 1. CHECK-IN LOGIC
+
     if (isset($_POST['check_in_btn'])) {
         $date = $_POST['att_date'];
         $in_time = $_POST['in_time'];
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $check_stmt->close();
     }
 
-    // 2. CHECK-OUT LOGIC
+  
     if (isset($_POST['check_out_btn'])) {
         $att_id = $_POST['att_id'];
         $out_time = $_POST['out_time'];
@@ -74,7 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Active session khuje ber kora
 $pending_query = $conn->query("SELECT * FROM attendance WHERE user_id = '$user_id' AND check_out IS NULL ORDER BY id DESC LIMIT 1");
 $pending_att = $pending_query->fetch_assoc();
 

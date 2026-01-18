@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// 1. Auth Check (Manage Employee স্টাইলে)
+
 if (isset($_SESSION['auth_user']['id'])) {
     $user_id = $_SESSION['auth_user']['id'];
 } else {
@@ -9,7 +9,7 @@ if (isset($_SESSION['auth_user']['id'])) {
     exit();
 }
 
-// Database Connection
+
 $host = 'localhost';
 $db   = 'payroll';
 $user = 'root';   
@@ -20,10 +20,10 @@ if ($conn->connect_error) {
     die("DB Connection failed: " . $conn->connect_error);
 }
 
-// --- 🔴 DELETE / CANCEL LOGIC (Manage Employee স্টাইলে) ---
+
 if (isset($_GET['delete'])) {
     $del_id = intval($_GET['delete']);
-    // শুধুমাত্র Pending স্ট্যাটাসে থাকা নিজের রিকোয়েস্ট ডিলিট করা যাবে
+
     $conn->query("DELETE FROM leave_requests WHERE id = $del_id AND user_id = $user_id AND status = 'Pending'");
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
@@ -31,7 +31,7 @@ if (isset($_GET['delete'])) {
 
 include '../includes/header.php';
 
-// 2. Fetch Pending Leaves
+
 $query = "SELECT leave_requests.*, users.name 
           FROM leave_requests 
           JOIN users ON leave_requests.user_id = users.id 
@@ -91,7 +91,7 @@ $result = $conn->query($query);
 </div>
 
 <script>
-    // ড্রপডাউন স্ক্রিপ্ট (Manage Employee স্টাইলে)
+
     document.addEventListener('click', function(e) {
         let dropdowns = document.querySelectorAll('.dropdown-content');
         dropdowns.forEach(d => d.style.display = 'none');
@@ -107,22 +107,98 @@ $result = $conn->query($query);
 </script>
 
 <style>
-    .content-wrapper{height:100vh;}
-    .employee-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #191C24; color: #fff; }
-    .employee-table th, .employee-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #333; }
-    .employee-table th { background-color: #2A2E39; font-weight: bold; }
-    .employee-table tr:hover { background-color: #2e3340; }
+ 
+    .content-wrapper { 
+        height: 100vh; 
+    }
 
-    .dropbtn { background-color: #4BB543; color: #fff; padding: 6px 12px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; min-width: 80px; }
+    
+    .employee-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-bottom: 30px; 
+        background-color: #191C24; 
+        color: #fff; 
+    }
 
-    .dropdown-content { display: none; position: absolute; background-color: #2A2E39; min-width: 150px; border-radius: 5px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); z-index: 1000; }
-    .dropdown-content a { color: #fff; padding: 10px 15px; text-decoration: none; display: block; }
-    .dropdown-content a:hover { background-color: #4BB543; }
+    .employee-table th, 
+    .employee-table td { 
+        padding: 12px 15px; 
+        text-align: left; 
+        border-bottom: 1px solid #333; 
+    }
 
-    @media(max-width:768px){
-        .employee-table thead { display: none; }
-        .employee-table, .employee-table tbody, .employee-table tr, .employee-table td { display: block; width: 100%; }
-        .employee-table td { text-align: right; padding-left: 50%; position: relative; border-bottom: 1px solid #333; }
-        .employee-table td::before { content: attr(data-label); position: absolute; left: 15px; width: 45%; font-weight: bold; text-align: left; }
+    .employee-table th { 
+        background-color: #2A2E39; 
+        font-weight: bold; 
+    }
+
+    .employee-table tr:hover { 
+        background-color: #2e3340; 
+    }
+
+  
+    .dropbtn { 
+        background-color: #4BB543; 
+        color: #fff; 
+        padding: 6px 12px; 
+        font-size: 14px; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer; 
+        min-width: 80px; 
+    }
+
+    
+    .dropdown-content { 
+        display: none; 
+        position: absolute; 
+        background-color: #2A2E39; 
+        min-width: 150px; 
+        border-radius: 5px; 
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3); 
+        z-index: 1000; 
+    }
+
+    .dropdown-content a { 
+        color: #fff; 
+        padding: 10px 15px; 
+        text-decoration: none; 
+        display: block; 
+    }
+
+    .dropdown-content a:hover { 
+        background-color: #4BB543; 
+    }
+
+  
+    @media(max-width: 768px) {
+        .employee-table thead { 
+            display: none; 
+        }
+
+        .employee-table, 
+        .employee-table tbody, 
+        .employee-table tr, 
+        .employee-table td { 
+            display: block; 
+            width: 100%; 
+        }
+
+        .employee-table td { 
+            text-align: right; 
+            padding-left: 50%; 
+            position: relative; 
+            border-bottom: 1px solid #333; 
+        }
+
+        .employee-table td::before { 
+            content: attr(data-label); 
+            position: absolute; 
+            left: 15px; 
+            width: 45%; 
+            font-weight: bold; 
+            text-align: left; 
+        }
     }
 </style>

@@ -1,5 +1,5 @@
 <?php
-// ১. সেশন শুরু করতে হবে রিডাইরেক্টের পর মেসেজ দেখানোর জন্য
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -10,26 +10,27 @@ $host = 'localhost';
 $db   = 'payroll';
 $user = 'root';   
 $pass = '';       
+
 $conn = new mysqli($host, $user, $pass, $db);
 
 if ($conn->connect_error) {
     die("DB Connection failed: " . $conn->connect_error);
 }
 
-// এমপ্লয়ি লিস্ট নিয়ে আসা
+
 $employees = $conn->query("SELECT id, name FROM users WHERE role = 'employee' ORDER BY name ASC");
 
-// সেশন থেকে স্ট্যাটাস চেক করা
-$status = $_SESSION['status'] ?? "";
-unset($_SESSION['status']); // একবার দেখানোর পর সেশন থেকে মুছে ফেলা
 
-// --- ২. Insert/Update Logic ---
+$status = $_SESSION['status'] ?? "";
+unset($_SESSION['status']); 
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user_id = intval($_POST['user_id'] ?? 0);
+    $user_id   = intval($_POST['user_id'] ?? 0);
     $house_rent = trim($_POST['house_rent'] ?? 0);
-    $medical = trim($_POST['medical_allowance'] ?? 0);
+    $medical   = trim($_POST['medical_allowance'] ?? 0);
     $transport = trim($_POST['transport_allowance'] ?? 0);
-    $other = trim($_POST['other_allowance'] ?? 0);
+    $other     = trim($_POST['other_allowance'] ?? 0);
 
     if ($user_id > 0) {
         $check = $conn->query("SELECT id FROM allowances WHERE user_id = $user_id");
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['status'] = "invalid";
     }
 
-    // ডাটা সেভ হওয়ার পর একই পেজে রিডাইরেক্ট করা যাতে রিফ্রেশ করলে ফর্ম রিসাবমিট না হয়
+
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }
@@ -63,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="main-panel">
     <div class="content-wrapper">
-        <h2 class="text-white mb-4">Set Employee Allowances</h2>
+        <h3 class="text-white mb-4">Employee Allowances</h3>
 
         <form method="POST" class="employee-form">
             <div class="row">
@@ -118,65 +119,123 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <style>
-            .employee-form { background: #191C24; padding: 25px; border-radius: 10px; max-width: 1200px; }
-            .row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
-            .col { flex: 1 1 45%; } 
-            .col-full { flex: 1 1 100%; }
-            .floating-label { position: relative; margin-top: 15px; }
-            .floating-label input, .floating-label select {
-                width: 100%; padding: 12px; border: 1px solid #555; border-radius: 5px; 
-                background: transparent !important; color: #fff; box-sizing: border-box; outline: none;
+            .employee-form {
+                background: #191C24;
+                padding: 25px;
+                border-radius: 10px;
+                max-width: 1200px;
+            }
+
+            .row {
+                display: flex;
+                gap: 20px;
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+            }
+
+            .col {
+                flex: 1 1 45%;
+            }
+
+            .col-full {
+                flex: 1 1 100%;
+            }
+
+            .floating-label {
+                position: relative;
+                margin-top: 15px;
+            }
+
+            .floating-label input,
+            .floating-label select {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #555;
+                border-radius: 5px;
+                background: transparent !important;
+                color: #fff;
+                box-sizing: border-box;
+                outline: none;
                 appearance: none;
             }
-            .floating-label select option { background-color: #191C24 !important; color: #fff; }
-            .floating-label label {
-                position: absolute; left: 12px; top: 12px; color: #aaa; 
-                background: #191C24; padding: 0 5px; transition: .2s; pointer-events: none;
+
+            .floating-label select option {
+                background-color: #191C24 !important;
+                color: #fff;
             }
+
+            .floating-label label {
+                position: absolute;
+                left: 12px;
+                top: 12px;
+                color: #aaa;
+                background: #191C24;
+                padding: 0 5px;
+                transition: .2s;
+                pointer-events: none;
+            }
+
             .floating-label input:focus + label,
             .floating-label input:not(:placeholder-shown) + label,
             .floating-label select:focus + label,
             .floating-label select:valid + label {
-                top: -8px; font-size: 12px; color: #aaa;
+                top: -8px;
+                font-size: 12px;
+                color: #aaa;
             }
-            .floating-label input:focus, .floating-label select:focus { border-color: #4BB543; }
+
+            .floating-label input:focus,
+            .floating-label select:focus {
+                border-color: #4BB543;
+            }
+
             button {
-                background: #4BB543; color: #fff; border: none; padding: 12px 35px; 
-                border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s;
+                background: #4BB543;
+                color: #fff;
+                border: none;
+                padding: 12px 35px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                font-size: 16px;
+                transition: 0.3s;
             }
-            button:hover { background: #3e9e37; }
+
+            button:hover {
+                background: #3e9e37;
+            }
         </style>
     </div>
 
     <script>
-    <?php if($status === "success"): ?>
-        Swal.fire({
-            title: 'Success!',
-            text: 'Allowance data has been saved successfully.',
-            icon: 'success',
-            confirmButtonColor: '#4BB543',
-            background: '#191C24',
-            color: '#fff'
-        });
-    <?php elseif($status === "error"): ?>
-        Swal.fire({
-            title: 'Error!',
-            text: 'Something went wrong.',
-            icon: 'error',
-            confirmButtonColor: '#fc424a',
-            background: '#191C24',
-            color: '#fff'
-        });
-    <?php elseif($status === "invalid"): ?>
-        Swal.fire({
-            title: 'Wait!',
-            text: 'Please select a valid employee.',
-            icon: 'warning',
-            confirmButtonColor: '#ffab00',
-            background: '#191C24',
-            color: '#fff'
-        });
-    <?php endif; ?>
+        <?php if($status === "success"): ?>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Allowance data has been saved successfully.',
+                icon: 'success',
+                confirmButtonColor: '#4BB543',
+                background: '#191C24',
+                color: '#fff'
+            });
+        <?php elseif($status === "error"): ?>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong.',
+                icon: 'error',
+                confirmButtonColor: '#fc424a',
+                background: '#191C24',
+                color: '#fff'
+            });
+        <?php elseif($status === "invalid"): ?>
+            Swal.fire({
+                title: 'Wait!',
+                text: 'Please select a valid employee.',
+                icon: 'warning',
+                confirmButtonColor: '#ffab00',
+                background: '#191C24',
+                color: '#fff'
+            });
+        <?php endif; ?>
     </script>
 
     <?php include '../includes/footer.php'; ?>
