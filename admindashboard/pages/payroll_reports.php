@@ -49,7 +49,7 @@ $result = ($query != "") ? $conn->query($query) : null;
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="page-header no-print">
-            <h3 class="page-title text-white">Dynamic Payroll & Attendance Report</h3>
+            <h3 class="page-title text-white">Payroll & Attendance Report</h3>
         </div>
 
         <div class="card card-dark mb-4 no-print">

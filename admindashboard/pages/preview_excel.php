@@ -92,26 +92,119 @@ $user_info = $all_rows[0] ?? null;
 <head>
     <meta charset="UTF-8">
     <title>Payroll_Preview_FullWidth</title>
-    <style>
-        body { font-family: "Segoe UI", Arial, sans-serif; background: #fff; margin: 0; padding: 10px; color: #333; }
-        .sheet { width: 98%; margin: 0 auto; padding: 10px; }
-        .btn-print { background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; float: right; font-weight: bold; }
-        .header-box { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #444; padding-bottom: 10px; }
-        .header-box h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
-        .info-section { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 14px; border: 1px solid #ccc; padding: 8px; background: #f9f9f9; }
-        table { width: 100%; border-collapse: collapse; table-layout: auto; }
-        th { background: #95a5a6; color: white; padding: 4px 2px; font-size: 10px; border: 1px solid #7f8c8d; text-align: center; }
-        td { padding: 4px 2px; border: 1px solid #ccc; font-size: 10.5px; text-align: center; }
-        .total-row { background: #eee !important; font-weight: bold; }
-        .footer-sigs { margin-top: 50px; display: flex; justify-content: space-between; }
-        .sig-box { border-top: 1px solid #000; width: 150px; text-align: center; font-size: 11px; padding-top: 5px; }
-        @media print { 
-            @page { size: landscape; margin: 0.5cm; }
-            .btn-print { display: none; } 
-            .sheet { width: 100%; padding: 0; }
-            th { background: #95a5a6 !important; color: white !important; -webkit-print-color-adjust: exact; }
+<style>
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #fff;
+        margin: 0;
+        padding: 10px;
+        color: #333;
+    }
+
+    .sheet {
+        width: 98%;
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    .btn-print {
+        background: #28a745;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+        font-weight: bold;
+    }
+
+    .header-box {
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #444;
+        padding-bottom: 10px;
+    }
+
+    .header-box h1 {
+        margin: 0;
+        font-size: 20px;
+        text-transform: uppercase;
+    }
+
+    .info-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-weight: bold;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        padding: 8px;
+        background: #f9f9f9;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: auto;
+    }
+
+    th {
+        background: #95a5a6;
+        color: white;
+        padding: 4px 2px;
+        font-size: 10px;
+        border: 1px solid #7f8c8d;
+        text-align: center;
+    }
+
+    td {
+        padding: 4px 2px;
+        border: 1px solid #ccc;
+        font-size: 10.5px;
+        text-align: center;
+    }
+
+    .total-row {
+        background: #eee !important;
+        font-weight: bold;
+    }
+
+    .footer-sigs {
+        margin-top: 50px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sig-box {
+        border-top: 1px solid #000;
+        width: 150px;
+        text-align: center;
+        font-size: 11px;
+        padding-top: 5px;
+    }
+
+    @media print { 
+        @page { 
+            size: landscape; 
+            margin: 0.5cm; 
         }
-    </style>
+
+        .btn-print { 
+            display: none; 
+        } 
+
+        .sheet { 
+            width: 100%; 
+            padding: 0; 
+        }
+
+        th { 
+            background: #95a5a6 !important; 
+            color: white !important; 
+            -webkit-print-color-adjust: exact; 
+        }
+    }
+</style>
 </head>
 <body>
 
