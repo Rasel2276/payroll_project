@@ -209,18 +209,30 @@ if (session_status() === PHP_SESSION_NONE) {
                 </div>
               </li>
               <li class="nav-item dropdown">
-             <a class="nav-link" id="profileDropdown" href="#" data-bs-toggle="dropdown">
-              <div class="navbar-profile">
-                <img class="img-xs rounded-circle" src="/payroll/employeedashboard/assets/images/faces/face15.jpg" alt="">
-                <p class="mb-0 d-none d-sm-block navbar-profile-name">
-                <?php 
-                echo isset($_SESSION['auth_user']['name']) ? htmlspecialchars($_SESSION['auth_user']['name']) : 'Guest'; 
-                ?>
-                </p>
-
-              <i class="mdi mdi-menu-down d-none d-sm-block"></i>
-              </div>
-            </a>
+<a class="nav-link" id="profileDropdown" href="#" data-bs-toggle="dropdown">
+  <div class="navbar-profile">
+    <?php 
+     
+      $db_image_path = isset($_SESSION['auth_user']['profile_image']) ? $_SESSION['auth_user']['profile_image'] : '';
+      
+    
+      if(!empty($db_image_path)) {
+    
+          $final_img = "/payroll/" . $db_image_path; 
+      } else {
+        
+          $final_img = "/payroll/employeedashboard/assets/images/faces/face15.jpg";
+      }
+    ?>
+    
+    <img class="img-xs rounded-circle" src="<?= $final_img ?>" alt="Profile" onerror="this.src='/payroll/employeedashboard/assets/images/faces/face15.jpg';">
+    
+    <p class="mb-0 d-none d-sm-block navbar-profile-name">
+        <?= isset($_SESSION['auth_user']['name']) ? htmlspecialchars($_SESSION['auth_user']['name']) : 'Guest' ?>
+    </p>
+    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+  </div>
+</a>
                 <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="profileDropdown">
                   <h6 class="p-3 mb-0">Profile</h6>
                   <div class="dropdown-divider"></div>

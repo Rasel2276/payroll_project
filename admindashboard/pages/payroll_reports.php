@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) { 
-    session_start(); 
-}
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 require_once __DIR__ . '/../../includes/admin_auth.php';
 
 $host = 'localhost'; 
@@ -10,266 +8,209 @@ $user = 'root';
 $pass = '';
 
 $conn = new mysqli($host, $user, $pass, $db);
-
-if ($conn->connect_error) {
-    die("DB Connection failed: " . $conn->connect_error);
-}
+if ($conn->connect_error) die("DB Connection failed: " . $conn->connect_error);
 
 include '../includes/header.php';
 
+$report_type     = $_GET['report_type'] ?? 'payslip';
+$employee_filter = $_GET['employee_filter'] ?? 'all';
+$selected_user   = $_GET['user_id'] ?? '';
+$period_type     = $_GET['period_type'] ?? 'monthly';
+$selected_month  = $_GET['month'] ?? date('F');
+$selected_year   = $_GET['year'] ?? date('Y');
 
-$selected_month = $_GET['month'] ?? date('F');
-$selected_year = $_GET['year'] ?? date('Y');
+$form_submitted = isset($_GET['generate_report']);
+$employees = $conn->query("SELECT id, name FROM users WHERE role='employee' ORDER BY name ASC");
 
-
-$query = "SELECT p.*, u.name as emp_name 
-          FROM payslips p 
-          JOIN users u ON p.user_id = u.id 
-          WHERE p.month = '$selected_month' AND p.year = '$selected_year'
-          ORDER BY p.id DESC";
-$report_data = $conn->query($query);
-
-$total_payout = 0;
+$query = "";
+if ($form_submitted) {
+    if ($report_type == 'payslip') {
+        $query = "SELECT p.*, u.name as emp_name, u.designation FROM payslips p JOIN users u ON p.user_id = u.id WHERE 1=1";
+        if ($employee_filter == 'individual' && $selected_user) $query .= " AND p.user_id = '$selected_user'";
+        if ($period_type == 'monthly') $query .= " AND p.month = '$selected_month' AND p.year = '$selected_year'";
+        else $query .= " AND p.year = '$selected_year'";
+    } 
+    else {
+        $query = "SELECT a.*, u.name as emp_name, u.designation FROM attendance a JOIN users u ON a.user_id = u.id WHERE 1=1";
+        if ($report_type == 'absent') $query .= " AND a.status = 'Absent'";
+        if ($employee_filter == 'individual' && $selected_user) $query .= " AND a.user_id = '$selected_user'";
+        
+        if ($period_type == 'monthly') {
+            $month_num = date('m', strtotime($selected_month));
+            $query .= " AND MONTH(a.attendance_date) = '$month_num' AND YEAR(a.attendance_date) = '$selected_year'";
+        } else { 
+            $query .= " AND YEAR(a.attendance_date) = '$selected_year'"; 
+        }
+    }
+}
+$result = ($query != "") ? $conn->query($query) : null;
 ?>
 
 <div class="main-panel">
     <div class="content-wrapper">
-        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
-            <h2 class="text-white mb-0">Payroll Report Summary</h2>
-            <button type="button" onclick="window.print()" class="btn-print-action">
-                <i class="mdi mdi-printer mr-1"></i> Print PDF Report
-            </button>
+        <div class="page-header no-print">
+            <h3 class="page-title text-white">Dynamic Payroll & Attendance Report</h3>
         </div>
 
-        <div class="filter-container mb-4 no-print">
-            <form method="GET" class="report-filter-form">
-                <div class="row align-items-end">
-                    <div class="col-md-4">
-                        <label class="text-muted small">Select Month</label>
-                        <select name="month" class="form-control custom-select-report">
-                            <?php 
-                            $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                            foreach($months as $m) {
-                                $selected = ($m == $selected_month) ? "selected" : "";
-                                echo "<option value='$m' $selected>$m</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="text-muted small">Select Year</label>
-                        <select name="year" class="form-control custom-select-report">
-                            <?php 
-                            for($y = 2024; $y <= 2030; $y++) {
-                                $selected = ($y == $selected_year) ? "selected" : "";
-                                echo "<option value='$y' $selected>$y</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <button type="submit" class="btn-filter">Generate Report</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+        <div class="card card-dark mb-4 no-print">
+            <div class="card-body">
+                <form method="GET" id="reportForm">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label>Report Category</label>
+                            <select name="report_type" class="form-control custom-input">
+                                <option value="payslip" <?= $report_type=='payslip'?'selected':'' ?>>Salary Report</option>
+                                <option value="attendance" <?= $report_type=='attendance'?'selected':'' ?>>Attendance Report</option>
+                                <option value="absent" <?= $report_type=='absent'?'selected':'' ?>>Absent Report</option>
+                            </select>
+                        </div>
 
-        <div id="printableReport" style="overflow-x:auto;">
-            <div class="print-header text-center mb-4" style="display:none;">
-                <h2 style="color: #000; margin-bottom: 5px;">Payroll Report</h2>
-                <p style="color: #555;">Month: <?php echo $selected_month . " " . $selected_year; ?></p>
+                        <div class="col-md-3 mb-3">
+                            <label>Employee Selection</label>
+                            <select name="employee_filter" class="form-control custom-input" onchange="this.form.submit()">
+                                <option value="all" <?= $employee_filter=='all'?'selected':'' ?>>All Employees</option>
+                                <option value="individual" <?= $employee_filter=='individual'?'selected':'' ?>>Individual</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label>Time Period</label>
+                            <select name="period_type" class="form-control custom-input" onchange="this.form.submit()">
+                                <option value="monthly" <?= $period_type=='monthly'?'selected':'' ?>>Monthly</option>
+                                <option value="yearly" <?= $period_type=='yearly'?'selected':'' ?>>Full Year</option>
+                            </select>
+                        </div>
+
+                        <?php if($period_type == 'monthly'): ?>
+                        <div class="col-md-3 mb-3">
+                            <label>Month</label>
+                            <select name="month" class="form-control custom-input">
+                                <?php foreach(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as $m): ?>
+                                    <option value="<?= $m ?>" <?= $selected_month==$m?'selected':'' ?>><?= $m ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="row align-items-end">
+                        <?php if($employee_filter == 'individual'): ?>
+                        <div class="col-md-3 mb-3">
+                            <label>Select Name & ID</label>
+                            <select name="user_id" class="form-control custom-input">
+                                <option value="">-- Choose Employee --</option>
+                                <?php while($emp = $employees->fetch_assoc()): ?>
+                                    <option value="<?= $emp['id'] ?>" <?= $selected_user==$emp['id']?'selected':'' ?>>ID: <?= $emp['id'] ?> | <?= htmlspecialchars($emp['name']) ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+
+                        <div class="col-md-2 mb-3">
+                            <label>Year</label>
+                            <select name="year" class="form-control custom-input">
+                                <?php for($y=2024; $y<=2030; $y++): ?>
+                                    <option value="<?= $y ?>" <?= $selected_year==$y?'selected':'' ?>><?= $y ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" name="generate_report" value="1" class="btn btn-success font-weight-bold" style="min-width: 150px;">
+                                    GENERATE
+                                </button>
+                                
+                                <?php if($form_submitted && $employee_filter == 'all'): ?>
+                                    <a href="preview_excel.php?report_type=<?= $report_type ?>&user_id=all&period_type=<?= $period_type ?>&month=<?= $selected_month ?>&year=<?= $selected_year ?>" target="_blank" class="btn btn-warning font-weight-bold">
+                                        <i class="mdi mdi-printer"></i> PREVIEW ALL
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <table class="employee-table">
-                <thead>
-                    <tr>
-                        <th>SL</th>
-                        <th>Employee Name</th>
-                        <th>Gross Pay</th>
-                        <th>Deductions</th>
-                        <th>Net Paid</th>
-                        <th>Status</th>
-                        <th>Pay Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if($report_data->num_rows > 0): $sl = 1; ?>
-                    <?php while($row = $report_data->fetch_assoc()): 
-                        $total_payout += $row['net_salary'];
-                    ?>
-                    <tr>
-                        <td><?php echo $sl++; ?></td>
-                        <td><?php echo htmlspecialchars($row['emp_name']); ?></td>
-                        <td><?php echo number_format($row['gross_salary'], 2); ?></td>
-                        <td style="color:#ff4d4f">- <?php echo number_format($row['total_deduction'], 2); ?></td>
-                        <td style="color:#4BB543; font-weight:bold;"><?php echo number_format($row['net_salary'], 2); ?></td>
-                        <td>
-                            <span class="badge <?php echo ($row['payment_status'] == 'Paid') ? 'badge-paid' : 'badge-pending'; ?>">
-                                <?php echo $row['payment_status']; ?>
-                            </span>
-                        </td>
-                        <td><?php echo date('d-M-Y', strtotime($row['created_at'])); ?></td>
-                    </tr>
-                    <?php endwhile; ?>
-                    <tr class="total-row">
-                        <td colspan="4" style="text-align:right; font-weight:bold;">Total Net Salary Distribution:</td>
-                        <td colspan="3" style="color:#4BB543; font-weight:bold; font-size:16px;">
-                            BDT <?php echo number_format($total_payout, 2); ?>
-                        </td>
-                    </tr>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="7" style="text-align:center; padding: 30px;">
-                            No data found for <?php echo $selected_month . " " . $selected_year; ?>.
-                        </td>
-                    </tr>
+        <div class="card card-dark">
+            <div class="card-body">
+                <?php if($form_submitted): ?>
+                    <div class="table-responsive">
+                        <table class="employee-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Designation</th>
+                                    <th>Month/Year</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if($result && $result->num_rows > 0): ?>
+                                    <?php while($row = $result->fetch_assoc()): 
+                                        $preview_url = "preview_excel.php?report_type=$report_type&user_id=".$row['user_id']."&period_type=$period_type&month=$selected_month&year=$selected_year";
+                                    ?>
+                                        <tr>
+                                            <td><?= $row['user_id'] ?></td>
+                                            <td><?= htmlspecialchars($row['emp_name'] ?? $row['name']) ?></td>
+                                            <td><?= htmlspecialchars($row['designation'] ?? 'N/A') ?></td>
+                                            <td><?= ($report_type == 'payslip') ? $row['month']."-".$row['year'] : $selected_month." ".$selected_year; ?></td>
+                                            <td>
+                                                <a href="<?= $preview_url ?>" target="_blank" class="btn btn-info btn-sm">
+                                                    <i class="mdi mdi-eye"></i> Preview
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">No Records Found!</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
-                </tbody>
-            </table>
+            </div>
         </div>
     </div>
-
-    <style>
-     
-        .employee-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-            background-color: #191C24;
-            color: #fff;
-        }
-
-        .employee-table th, 
-        .employee-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #333;
-        }
-
-        .employee-table th {
-            background-color: #2A2E39;
-            font-weight: bold;
-            color: #fff !important;
-        }
-
-        .employee-table tr:hover {
-            background-color: #2e3340;
-        }
-
-        .total-row {
-            background: #2A2E39 !important;
-        }
-
-        
-        .report-filter-form {
-            background: #191C24;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #2c2e33;
-        }
-
-        .custom-select-report {
-            background: #2A3038 !important;
-            border: 1px solid #444 !important;
-            color: #fff !important;
-            height: 45px;
-        }
-
-        .btn-filter {
-            background: #4BB543;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            height: 45px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn-filter:hover {
-            background: #3e9e37;
-        }
-
-        .btn-print-action {
-            background: #0090e7;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-      
-        .badge {
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .badge-paid {
-            background: rgba(75, 181, 67, 0.15);
-            color: #4BB543;
-            border: 1px solid #4BB543;
-        }
-
-        .badge-pending {
-            background: rgba(255, 171, 0, 0.15);
-            color: #ffab00;
-            border: 1px solid #ffab00;
-        }
-
-        
-        @media print {
-            .no-print, 
-            .sidebar, 
-            .navbar, 
-            .footer,
-            .btn-filter {
-                display: none !important;
-            }
-
-            .main-panel {
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
-            .content-wrapper {
-                background: #fff !important;
-                padding: 0 !important;
-            }
-
-            .print-header {
-                display: block !important;
-            }
-
-            .employee-table {
-                color: #000 !important;
-                background: #fff !important;
-            }
-
-            .employee-table th {
-                background: #f2f2f2 !important;
-                color: #000 !important;
-                border: 1px solid #ddd !important;
-            }
-
-            .employee-table td {
-                border: 1px solid #ddd !important;
-                color: #000 !important;
-            }
-            
-            .total-row {
-                background: #f9f9f9 !important;
-            }
-        }
-    </style>
-
     <?php include '../includes/footer.php'; ?>
 </div>
+
+<style>
+    .card-dark {
+        background: #191c24;
+        border: 1px solid #2c2e33;
+        border-radius: 8px;
+    }
+    
+    .custom-input {
+        background: #2a3038 !important;
+        color: white !important;
+        border: 1px solid #2c2e33 !important;
+        padding: 10px;
+    }
+    
+    .employee-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #fff;
+    }
+    
+    .employee-table th {
+        background: #2A2E39;
+        padding: 15px;
+        border-bottom: 2px solid #444;
+        color: #adb5bd;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+    
+    .employee-table td {
+        padding: 15px;
+        border-bottom: 1px solid #2c2e33;
+        font-size: 14px;
+    }
+</style>

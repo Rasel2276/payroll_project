@@ -186,6 +186,15 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
           <li class="nav-item menu-items">
+            <a class="nav-link" href="/payroll/admindashboard/pages/manage_calendar.php">
+              <span class="menu-icon">
+                <i class="mdi mdi-cog"></i>
+              </span>
+              <span class="menu-title">Manage Calendar</span>
+            </a>
+          </li>
+
+          <li class="nav-item menu-items">
             <a class="nav-link" href="/payroll/admindashboard/pages/payroll_reports.php">
               <span class="menu-icon">
                 <i class="mdi mdi-chart-bar"></i>
@@ -195,14 +204,7 @@ if (session_status() === PHP_SESSION_NONE) {
             </a>
           </li>
 
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="/payroll/admindashboard/pages/manage_calendar.php">
-              <span class="menu-icon">
-                <i class="mdi mdi-cog"></i>
-              </span>
-              <span class="menu-title">Manage Calendar</span>
-            </a>
-          </li>
+
         </ul>
       </nav>
       <!-- partial -->
