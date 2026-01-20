@@ -61,7 +61,6 @@ $result = ($query != "") ? $conn->query($query) : null;
                             <select name="report_type" class="form-control custom-input">
                                 <option value="payslip" <?= $report_type=='payslip'?'selected':'' ?>>Salary Report</option>
                                 <option value="attendance" <?= $report_type=='attendance'?'selected':'' ?>>Attendance Report</option>
-                                <option value="absent" <?= $report_type=='absent'?'selected':'' ?>>Absent Report</option>
                             </select>
                         </div>
 

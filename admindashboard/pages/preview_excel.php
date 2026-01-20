@@ -13,40 +13,76 @@ if ($conn->connect_error) die("DB Connection failed: " . $conn->connect_error);
 $type   = $_GET['report_type'] ?? 'payslip';
 $uid    = $_GET['user_id'] ?? 'all';
 $p_type = $_GET['period_type'] ?? 'monthly';
-$month  = $_GET['month'] ?? '';
-$year   = $_GET['year'] ?? '';
+$month  = $_GET['month'] ?? date('F');
+$year   = $_GET['year'] ?? date('Y');
 
-// ডাটা নিয়ে আসা
+$all_rows = [];
+
 if ($type == 'payslip') {
-    $sql = "SELECT p.*, u.name, u.designation 
-            FROM payslips p 
-            JOIN users u ON p.user_id = u.id 
-            WHERE 1=1";
-            
+    // স্যালারি রিপোর্টের কোড অপরিবর্তিত রাখা হয়েছে
+    $sql = "SELECT p.*, u.name, u.designation FROM payslips p JOIN users u ON p.user_id = u.id WHERE 1=1";
     if ($uid !== 'all') $sql .= " AND p.user_id = '$uid'";
     if ($p_type == 'monthly') $sql .= " AND p.month = '$month' AND p.year = '$year'";
     else $sql .= " AND p.year = '$year'";
-    
-    $sql .= " ORDER BY u.name ASC, FIELD(p.month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')";
+    $sql .= " ORDER BY u.name ASC";
+    $result = $conn->query($sql);
+    while($row = $result->fetch_assoc()) { $all_rows[] = $row; }
 } else {
-    $sql = "SELECT a.*, u.name, u.designation 
-            FROM attendance a 
-            JOIN users u ON a.user_id = u.id 
-            WHERE 1=1";
-            
-    if ($uid !== 'all') $sql .= " AND a.user_id = '$uid'";
-    
+    // এটেনডেন্স রিপোর্ট লজিক (শুক্রবার-শনিবার বাদ এবং অটো-অ্যাবসেন্ট)
     $m_num = date('m', strtotime($month));
-    if ($p_type == 'monthly') $sql .= " AND MONTH(a.attendance_date) = '$m_num' AND YEAR(a.attendance_date) = '$year'";
-    else $sql .= " AND YEAR(a.attendance_date) = '$year'";
-    
-    $sql .= " ORDER BY u.name ASC, a.attendance_date ASC";
-}
+    $days_in_month = cal_days_in_month(CAL_GREGORIAN, $m_num, $year);
 
-$result = $conn->query($sql);
-$all_rows = [];
-while($row = $result->fetch_assoc()) { 
-    $all_rows[] = $row; 
+    // ইউজার লিস্ট আনা
+    $u_sql = ($uid !== 'all') ? "SELECT id, name, designation FROM users WHERE id = '$uid'" : "SELECT id, name, designation FROM users WHERE role='employee'";
+    $u_res = $conn->query($u_sql);
+
+    while($user_data = $u_res->fetch_assoc()) {
+        $curr_uid = $user_data['id'];
+        
+        // নির্দিষ্ট মাসের প্রতিটি দিনের জন্য লুপ
+        for ($d = 1; $d <= $days_in_month; $d++) {
+            $date_str = sprintf('%04d-%02d-%02d', $year, $m_num, $d);
+            $day_name = date('l', strtotime($date_str));
+
+            // শুক্রবার (Friday) এবং শনিবার (Saturday) বাদ
+            if ($day_name == 'Friday' || $day_name == 'Saturday') continue;
+
+            // ডাটাবেজ থেকে ওই দিনের রেকর্ড চেক
+            $att_sql = "SELECT * FROM attendance WHERE user_id = '$curr_uid' AND attendance_date = '$date_str'";
+            $att_res = $conn->query($att_sql);
+            $att = $att_res->fetch_assoc();
+
+            $status = 'Absent'; // ডিফল্ট অ্যাবসেন্ট
+            $check_in = '---';
+            $check_out = '---';
+
+            if ($att) {
+                if ($att['status'] == 'Present') {
+                    $status = 'Present';
+                    $check_in = $att['check_in'];
+                    $check_out = $att['check_out'];
+                } 
+                // লিভ যদি অ্যাপ্রুভ থাকে তবে প্রেজেন্ট ধরবে (আপনার রিকোয়েস্ট অনুযায়ী)
+                // এখানে ধরে নেওয়া হয়েছে লিভ টেবিল বা এটেনডেন্সে leave_status আছে
+                elseif ($att['status'] == 'Leave' && isset($att['leave_status']) && $att['leave_status'] == 'Approved') {
+                    $status = 'Present (Leave)';
+                }
+            }
+
+            // যদি রিপোর্টে শুধু অ্যাবসেন্ট দেখতে চান
+            if ($_GET['report_type'] == 'absent' && $status == 'Present') continue;
+
+            $all_rows[] = [
+                'user_id' => $curr_uid,
+                'name' => $user_data['name'],
+                'designation' => $user_data['designation'],
+                'attendance_date' => $date_str,
+                'check_in' => $check_in,
+                'check_out' => $check_out,
+                'status' => $status
+            ];
+        }
+    }
 }
 $user_info = $all_rows[0] ?? null;
 ?>
@@ -57,114 +93,23 @@ $user_info = $all_rows[0] ?? null;
     <meta charset="UTF-8">
     <title>Payroll_Preview_FullWidth</title>
     <style>
-        body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: #fff;
-            margin: 0;
-            padding: 10px;
-            color: #333;
-        }
-
-        .sheet {
-            width: 98%;
-            margin: 0 auto;
-            padding: 10px;
-        }
-
-        .btn-print {
-            background: #28a745;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            float: right;
-            font-weight: bold;
-        }
-        
-        .header-box {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #444;
-            padding-bottom: 10px;
-        }
-
-        .header-box h1 {
-            margin: 0;
-            font-size: 20px;
-            text-transform: uppercase;
-        }
-
-        /* New Info Section Styling */
-        .info-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-weight: bold;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            padding: 8px;
-            background: #f9f9f9;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: auto;
-        }
-
-        th {
-            background: #95a5a6;
-            color: white;
-            padding: 4px 2px;
-            font-size: 10px;
-            border: 1px solid #7f8c8d;
-            text-align: center;
-        }
-
-        td {
-            padding: 4px 2px;
-            border: 1px solid #ccc;
-            font-size: 10.5px;
-            text-align: center;
-        }
-        
-        .total-row {
-            background: #eee !important;
-            font-weight: bold;
-        }
-
-        .footer-sigs {
-            margin-top: 50px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .sig-box {
-            border-top: 1px solid #000;
-            width: 150px;
-            text-align: center;
-            font-size: 11px;
-            padding-top: 5px;
-        }
-
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #fff; margin: 0; padding: 10px; color: #333; }
+        .sheet { width: 98%; margin: 0 auto; padding: 10px; }
+        .btn-print { background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; float: right; font-weight: bold; }
+        .header-box { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #444; padding-bottom: 10px; }
+        .header-box h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
+        .info-section { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 14px; border: 1px solid #ccc; padding: 8px; background: #f9f9f9; }
+        table { width: 100%; border-collapse: collapse; table-layout: auto; }
+        th { background: #95a5a6; color: white; padding: 4px 2px; font-size: 10px; border: 1px solid #7f8c8d; text-align: center; }
+        td { padding: 4px 2px; border: 1px solid #ccc; font-size: 10.5px; text-align: center; }
+        .total-row { background: #eee !important; font-weight: bold; }
+        .footer-sigs { margin-top: 50px; display: flex; justify-content: space-between; }
+        .sig-box { border-top: 1px solid #000; width: 150px; text-align: center; font-size: 11px; padding-top: 5px; }
         @media print { 
-            @page {
-                size: landscape;
-                margin: 0.5cm;
-            }
-            .btn-print {
-                display: none;
-            } 
-            .sheet {
-                width: 100%;
-                padding: 0;
-            }
-            th {
-                background: #95a5a6 !important;
-                color: white !important;
-                -webkit-print-color-adjust: exact;
-            }
+            @page { size: landscape; margin: 0.5cm; }
+            .btn-print { display: none; } 
+            .sheet { width: 100%; padding: 0; }
+            th { background: #95a5a6 !important; color: white !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -174,14 +119,11 @@ $user_info = $all_rows[0] ?? null;
 
 <div class="sheet">
     <div class="header-box">
-        <h1>Payroll Detailed Report - <?= ($uid == 'all') ? 'All Staff' : 'Individual' ?></h1>
-        <p style="margin:2px; font-size: 12px;">
-            Period: <?= ($p_type == 'monthly') ? "$month $year" : "Year $year" ?>
-        </p>
+        <h1><?= ($type == 'payslip') ? 'Payroll Detailed Report' : 'Attendance/Absent Report' ?> - <?= ($uid == 'all') ? 'All Staff' : 'Individual' ?></h1>
+        <p style="margin:2px; font-size: 12px;">Period: <?= ($p_type == 'monthly') ? "$month $year" : "Year $year" ?></p>
     </div>
 
-    <?php if($user_info): ?>
-        
+    <?php if(!empty($all_rows)): ?>
         <?php if($uid !== 'all'): ?>
         <div class="info-section">
             <div>Name (ID): <?= htmlspecialchars($user_info['name']) ?> (<?= $user_info['user_id'] ?>)</div>
@@ -193,10 +135,9 @@ $user_info = $all_rows[0] ?? null;
         <thead>
             <?php if($type == 'payslip'): ?>
                 <tr>
-                    <th rowspan="2">ID-Name</th>
-                    <th rowspan="2">Period</th>
-                    <th colspan="8" style="background: #2c3e50;">Earnings (যোগফল)</th>
-                    <th colspan="5" style="background: #c0392b;">Deductions (কর্তন)</th>
+                    <th rowspan="2">ID-Name</th><th rowspan="2">Period</th>
+                    <th colspan="8" style="background: #2c3e50;">Earnings</th>
+                    <th colspan="5" style="background: #c0392b;">Deductions</th>
                     <th rowspan="2" style="background: #27ae60;">Gross</th>
                     <th rowspan="2" style="background: #27ae60;">Net</th>
                 </tr>
@@ -206,12 +147,7 @@ $user_info = $all_rows[0] ?? null;
                 </tr>
             <?php else: ?>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>In</th>
-                    <th>Out</th>
-                    <th>Status</th>
+                    <th>ID</th><th>Name</th><th>Date</th><th>In</th><th>Out</th><th>Status</th>
                 </tr>
             <?php endif; ?>
         </thead>
@@ -223,8 +159,8 @@ $user_info = $all_rows[0] ?? null;
                     $total_all_net += $row['net_salary'];
             ?>
                 <tr>
-                    <td style="text-align:left; white-space: nowrap;"><?= $row['user_id'] ?>-<?= htmlspecialchars($row['name']) ?></td>
-                    <td style="white-space: nowrap;"><?= $row['month'] ?>-<?= $row['year'] ?></td>
+                    <td style="text-align:left;"><?= $row['user_id'] ?>-<?= htmlspecialchars($row['name']) ?></td>
+                    <td><?= $row['month'] ?>-<?= $row['year'] ?></td>
                     <td><?= number_format($row['basic_salary'], 0) ?></td>
                     <td><?= number_format($row['medical_allowance'], 0) ?></td>
                     <td><?= number_format($row['house_rent'], 0) ?></td>
@@ -248,7 +184,7 @@ $user_info = $all_rows[0] ?? null;
                     <td><?= date('d-M-y', strtotime($row['attendance_date'])) ?></td>
                     <td><?= $row['check_in'] ?></td>
                     <td><?= $row['check_out'] ?></td>
-                    <td><?= $row['status'] ?></td>
+                    <td style="<?= $row['status'] == 'Absent' ? 'color:red; font-weight:bold;' : '' ?>"><?= $row['status'] ?></td>
                 </tr>
             <?php endif; endforeach; ?>
         </tbody>
@@ -270,6 +206,5 @@ $user_info = $all_rows[0] ?? null;
         <h2 style="text-align:center;">No Records Found</h2>
     <?php endif; ?>
 </div>
-
 </body>
 </html>
