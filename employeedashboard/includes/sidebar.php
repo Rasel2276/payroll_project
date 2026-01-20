@@ -6,25 +6,39 @@ if (session_status() === PHP_SESSION_NONE) {
        <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-          <a class="sidebar-brand brand-logo" href="index.html"><img src="/payroll/employeedashboard/assets/images/logo.svg" alt="logo" /></a>
+          <a class="sidebar-brand brand-logo" href="/payroll/employeedashboard/index.php"><img src="/payroll/employeedashboard/assets/images/logo.svg" alt="logo" /></a>
           <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="/payroll/employeedashboard/assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
         <ul class="nav">
           <li class="nav-item profile">
             <div class="profile-desc">
               <div class="profile-pic">
-                <div class="count-indicator">
-                  <img class="img-xs rounded-circle " src="/payroll/employeedashboard/assets/images/faces/face15.jpg" alt="">
-                  <span class="count bg-success"></span>
-                </div>
-                <div class="profile-name">
-                  <h5 class="mb-0 font-weight-normal">
-                    <?php 
-                      echo isset($_SESSION['auth_user']['name']) ? htmlspecialchars($_SESSION['auth_user']['name']) : 'Guest'; 
-                    ?>
-                    </h5>
-                  <span>Gold Member</span>
-                </div>
+               <div class="count-indicator">
+                <?php 
+   
+                   $db_image_path = isset($_SESSION['auth_user']['profile_image']) ? $_SESSION['auth_user']['profile_image'] : '';
+    
+                  if(!empty($db_image_path)) {
+                  $final_img = "/payroll/" . $db_image_path; 
+                 } else {
+                  $final_img = "/payroll/employeedashboard/assets/images/faces/face15.jpg";
+                 }
+                ?>
+  
+              <img class="img-xs rounded-circle" 
+              src="<?= $final_img ?>" 
+              alt="Profile" 
+              onerror="this.src='/payroll/employeedashboard/assets/images/faces/face15.jpg';">
+  
+              <span class="count bg-success"></span>
+             </div>
+
+            <div class="profile-name">
+            <h5 class="mb-0 font-weight-normal">
+            <?= isset($_SESSION['auth_user']['name']) ? htmlspecialchars($_SESSION['auth_user']['name']) : 'Guest' ?>
+            </h5>
+            <span>Gold Member</span>
+             </div>
               </div>
               <a href="#" id="profile-dropdown" data-bs-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
               <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
